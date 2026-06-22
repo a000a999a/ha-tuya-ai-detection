@@ -28,20 +28,18 @@ async def analyze(file: UploadFile = File(...)):
     data = await file.read()
     img = Image.open(io.BytesIO(data)).convert("RGB")
 
-    results = model(img, verbose=False)[0]
+    results = model(img, classes=[PERSON_CLASS], verbose=False)[0]
 
     human = False
     confidence = 0.0
     for box in results.boxes:
-        if int(box.cls[0]) == PERSON_CLASS:
-            conf = float(box.conf[0])
-            if conf >= CONFIDENCE and conf > confidence:
-                human = True
-                confidence = conf
+        conf = float(box.conf[0])
+        if conf >= CONFIDENCE and conf > confidence:
+            human = True
+            confidence = conf
 
-    annotated = Image.fromarray(results.plot()[..., ::-1])  # BGR → RGB
     buf = io.BytesIO()
-    annotated.save(buf, "JPEG", quality=85)
+    img.save(buf, "JPEG", quality=85)
     annotated_b64 = base64.b64encode(buf.getvalue()).decode()
 
     return {

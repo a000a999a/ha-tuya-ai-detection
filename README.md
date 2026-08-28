@@ -34,6 +34,21 @@ tuya_cameras:
 - ~500 MB RAM at runtime
 - CPU-only — no GPU required (YOLOv8n runs in ~250–400 ms on a modern dual-core)
 
+**This repo does not install Docker for you** — it assumes Docker + Docker Compose are already
+available on the machine you're running it on. Whether that's a 1-step or 2-step setup for you
+depends on what you're starting from:
+
+- **Already have Docker/Docker Compose on this machine?** (common if you also run Home Assistant
+  itself in Docker) → **1 step**: clone this repo and `docker compose up -d` below.
+- **No Docker on this machine at all** (e.g. Home Assistant OS / Supervised with no other Docker
+  use, or a bare install)? → **2 steps**: install Docker + Docker Compose first
+  ([docs.docker.com/engine/install](https://docs.docker.com/engine/install/)), *then* the same
+  clone + `docker compose up -d` below.
+
+`ha-tuya-cameras` (the main integration) never requires Docker — this AI service is the only
+piece of the solution that does, and only if you want human-detection filtering. Everything else
+(motion alerts, SD monitoring, email delivery) works fully without it.
+
 ---
 
 ## Setup

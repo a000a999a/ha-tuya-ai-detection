@@ -3,6 +3,8 @@ services:
     build: ./service
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      # The API has no authentication — localhost only by default. If Home Assistant
+      # runs on another machine, set AI_BIND_ADDR to this host's LAN IP (see README).
+      - "${AI_BIND_ADDR:-127.0.0.1}:8000:8000"
     environment:
       - PYTHONUNBUFFERED=1

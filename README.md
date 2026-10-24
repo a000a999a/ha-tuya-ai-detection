@@ -80,6 +80,18 @@ In Home Assistant:
 
 The options flow validates `/health` before saving.
 
+**Network exposure:** the service has no authentication, so by default it listens on
+`127.0.0.1` only — which works when Home Assistant runs on the same host (host
+networking or HA OS add-on style setups). If Home Assistant runs on a different
+machine, bind it to this host's LAN address instead and use that address as the
+inference service URL:
+
+```bash
+AI_BIND_ADDR=192.168.x.y docker compose up -d   # or put AI_BIND_ADDR=... in a .env file
+```
+
+Never forward port 8000 on your router or expose it outside your LAN.
+
 ---
 
 ## API

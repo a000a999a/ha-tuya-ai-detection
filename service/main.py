@@ -1,16 +1,25 @@
 """
-Tuya AI Detection — YOLOv8n inference service.
+Tuya AI Detection — YOLOv8 inference service (default model: YOLOv8s).
 POST /analyze  — accepts a JPEG image, returns human + animal detection results.
 GET  /health   — liveness check used by the HA options flow validator.
+
+Model choice: YOLOv8s by default. In a 7-day comparison on real motion snapshots it
+caught clearly more people than YOLOv8n in hard cases — night-time infrared, faces
+covered by a helmet or hood, people close to the lens or half out of frame — at about
+35 ms per image on a modern 8-core CPU. On slow hardware set AI_MODEL=yolov8n.pt
+(faster, misses more people). Both models are baked into the image.
 """
 
 import base64
 import io
+import os
+from pathlib import Path
 
 from fastapi import FastAPI, File, UploadFile
 from PIL import Image
 from ultralytics import YOLO
 
+MODEL_FILE = os.environ.get("AI_MODEL", "yolov8s.pt")
 CONFIDENCE = 0.60
 PERSON_CLASS = 0  # COCO class 0 = person
 ANIMAL_CLASSES = {
@@ -19,12 +28,12 @@ ANIMAL_CLASSES = {
 }
 
 app = FastAPI(title="Tuya AI Detection")
-model = YOLO("yolov8n.pt")
+model = YOLO(MODEL_FILE)
 
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "model": "yolov8n"}
+    return {"status": "ok", "model": Path(MODEL_FILE).stem}
 
 
 @app.post("/analyze")

@@ -8,3 +8,6 @@ services:
       - "${AI_BIND_ADDR:-127.0.0.1}:8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
+      # Detection model: yolov8s.pt (default, more accurate) or yolov8n.pt (faster, for
+      # slow hardware such as a Raspberry Pi). See "Hardware recommendations" in the README.
+      - AI_MODEL=${AI_MODEL:-yolov8s.pt}

@@ -9,8 +9,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Pre-download the YOLOv8n model so first request is not slow
-RUN python -c "from ultralytics import YOLO; YOLO('yolov8n.pt')"
+# Pre-download both models so the service starts without internet access and
+# switching via AI_MODEL needs no rebuild (yolov8s ~22 MB default, yolov8n ~6 MB)
+RUN python -c "from ultralytics import YOLO; YOLO('yolov8s.pt'); YOLO('yolov8n.pt')"
 
 COPY main.py .
 
